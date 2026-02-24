@@ -1,9 +1,10 @@
 import {
   Controller, Get, Post, Put, Delete, Body, Param, Query,
-  UseGuards, HttpCode, HttpStatus,
+  UseGuards, HttpCode, HttpStatus, Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RequestWithUser } from '@/shared/types';
 import { MotorTributarioService, ItemOperacao, ContextoTributario } from '../services/motor-tributario.service';
 import { CalculoSimplesNacionalService } from '../services/calculo-simples-nacional.service';
 import { ValidadorTributarioService } from '../services/validador-tributario.service';
@@ -33,7 +34,7 @@ export class FiscalController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Calcular impostos para um item de operação' })
   @ApiResponse({ status: 200, description: 'Resultado do cálculo tributário' })
-  async calcularImpostos(@Body() dto: CalcularImpostoDto) {
+  async calcularImpostos(@Req() req: RequestWithUser, @Body() dto: CalcularImpostoDto) {
     // Montar item e contexto a partir do DTO
     const item: ItemOperacao = {
       produtoId: dto.produtoId,
@@ -45,10 +46,9 @@ export class FiscalController {
       valorTotal: dto.valorTotal,
     };
 
-    // TODO: buscar tenantId e empresaId do usuário autenticado
     const contexto: ContextoTributario = {
-      tenantId: '00000000-0000-0000-0000-000000000000',
-      empresaId: '00000000-0000-0000-0000-000000000000',
+      tenantId: (req as any).user.tenantId,
+      empresaId: (req as any).user.empresaId,
       regimeEmpresa: dto.regimeEmpresa,
       ufOrigem: dto.ufOrigem,
       ufDestino: dto.ufDestino,
@@ -185,33 +185,33 @@ export class FiscalController {
 
   @Get('matriz')
   @ApiOperation({ summary: 'Listar regras da matriz tributária' })
-  async listarMatriz(@Query() filtro: FiltroTabelaDto) {
-    // TODO: pegar tenantId do usuário autenticado
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+  async listarMatriz(@Req() req: RequestWithUser, @Query() filtro: FiltroTabelaDto) {
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.listarMatrizTributaria(tenantId, filtro);
   }
 
   @Post('matriz')
   @ApiOperation({ summary: 'Criar regra na matriz tributária' })
-  async criarRegraMatriz(@Body() dto: CriarRegraMatrizDto) {
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+  async criarRegraMatriz(@Req() req: RequestWithUser, @Body() dto: CriarRegraMatrizDto) {
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.criarRegraMatriz(tenantId, dto);
   }
 
   @Put('matriz/:id')
   @ApiOperation({ summary: 'Atualizar regra da matriz tributária' })
   async atualizarRegraMatriz(
+    @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Body() dto: CriarRegraMatrizDto,
   ) {
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.atualizarRegraMatriz(id, tenantId, dto);
   }
 
   @Delete('matriz/:id')
   @ApiOperation({ summary: 'Desativar regra da matriz tributária' })
-  async excluirRegraMatriz(@Param('id') id: string) {
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+  async excluirRegraMatriz(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.excluirRegraMatriz(id, tenantId);
   }
 
@@ -221,15 +221,15 @@ export class FiscalController {
 
   @Get('empresa-fiscal/:empresaId')
   @ApiOperation({ summary: 'Buscar configuração fiscal da empresa' })
-  async buscarEmpresaFiscal(@Param('empresaId') empresaId: string) {
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+  async buscarEmpresaFiscal(@Req() req: RequestWithUser, @Param('empresaId') empresaId: string) {
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.buscarEmpresaFiscal(tenantId, empresaId);
   }
 
   @Post('empresa-fiscal')
   @ApiOperation({ summary: 'Criar ou atualizar configuração fiscal da empresa' })
-  async configurarEmpresaFiscal(@Body() dto: EmpresaFiscalDto) {
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+  async configurarEmpresaFiscal(@Req() req: RequestWithUser, @Body() dto: EmpresaFiscalDto) {
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.criarOuAtualizarEmpresaFiscal(tenantId, dto);
   }
 
@@ -239,8 +239,8 @@ export class FiscalController {
 
   @Get('estatisticas')
   @ApiOperation({ summary: 'Obter estatísticas do módulo fiscal' })
-  async getEstatisticas() {
-    const tenantId = '00000000-0000-0000-0000-000000000000';
+  async getEstatisticas(@Req() req: RequestWithUser) {
+    const tenantId = (req as any).user.tenantId;
     return this.tabelas.getEstatisticasFiscais(tenantId);
   }
 }
