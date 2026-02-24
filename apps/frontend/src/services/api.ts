@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || '/api/v1';
 
 const api = axios.create({
@@ -37,7 +37,7 @@ api.interceptors.response.use(
           throw new Error('No refresh token');
         }
 
-        const response = await axios.post(`${API_URL}${API_PREFIX}/auth/refresh`, {
+        const response = await axios.post(`${API_PREFIX}/auth/refresh`, {
           refreshToken,
         });
 

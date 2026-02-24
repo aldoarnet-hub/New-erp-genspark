@@ -6,6 +6,7 @@ import { Filial } from '../../modules/core/filial/entities/filial.entity';
 import { Usuario } from '../../modules/core/usuario/entities/usuario.entity';
 import { PERFIS } from '../../shared/enums';
 import { seedFiscalData } from './seed-fiscal';
+import { seedCadastrosData } from './seed-cadastros';
 
 // Import fiscal entities for DataSource
 import { EmpresaFiscal } from '../../modules/fiscal/entities/empresa-fiscal.entity';
@@ -15,6 +16,13 @@ import { CfopTabela } from '../../modules/fiscal/entities/cfop-tabela.entity';
 import { CstIcms, CstIpi, CstPisCofins } from '../../modules/fiscal/entities/cst-tabelas.entity';
 import { IcmsAliquotasUf, IcmsStMva } from '../../modules/fiscal/entities/icms-tabelas.entity';
 import { MatrizTributaria } from '../../modules/fiscal/entities/matriz-tributaria.entity';
+
+// Import cadastros entities
+import { UnidadeMedida } from '../../modules/cadastros/entities/unidade-medida.entity';
+import { Categoria, Marca, Fabricante, TabelaPreco, FormaPagamento, CondicaoPagamento, CondicaoPagamentoParcela, Banco, ContaBancaria, CentroCusto, PlanoConta, Auditoria } from '../../modules/cadastros/entities/auxiliares.entity';
+import { Produto, ProdutoPreco, ProdutoFilial, ProdutoComposicao, ProdutoSimilar, ProdutoAplicacao, ProdutoMidia } from '../../modules/cadastros/entities/produto.entity';
+import { Cliente, ClienteEndereco, ClienteContato, ClienteLimite } from '../../modules/cadastros/entities/cliente.entity';
+import { Fornecedor, FornecedorAvaliacao, Transportadora, Vendedor, VendedorCarteira } from '../../modules/cadastros/entities/fornecedor.entity';
 
 async function runSeed() {
   const dataSource = new DataSource({
@@ -29,6 +37,15 @@ async function runSeed() {
       EmpresaFiscal, NcmTabela, CestTabela, CfopTabela,
       CstIcms, CstIpi, CstPisCofins,
       IcmsAliquotasUf, IcmsStMva, MatrizTributaria,
+      // Cadastros
+      UnidadeMedida, Categoria, Marca, Fabricante, TabelaPreco,
+      FormaPagamento, CondicaoPagamento, CondicaoPagamentoParcela,
+      Banco, ContaBancaria, CentroCusto, PlanoConta, Auditoria,
+      Produto, ProdutoPreco, ProdutoFilial, ProdutoComposicao,
+      ProdutoSimilar, ProdutoAplicacao, ProdutoMidia,
+      Cliente, ClienteEndereco, ClienteContato, ClienteLimite,
+      Fornecedor, FornecedorAvaliacao, Transportadora,
+      Vendedor, VendedorCarteira,
     ],
     synchronize: true,
   });
@@ -165,6 +182,9 @@ async function runSeed() {
 
   // 6. Seed dos dados fiscais (tabelas de referência)
   await seedFiscalData(dataSource);
+
+  // 7. Seed dos cadastros base (Fase 3)
+  await seedCadastrosData(dataSource, tenant.id);
 
   console.log('\nSeed concluido com sucesso!');
   console.log('==========================================');

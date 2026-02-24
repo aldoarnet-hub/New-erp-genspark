@@ -3,6 +3,10 @@ import { MainLayout } from '@/components/layout';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import FiscalPage from '@/pages/fiscal/FiscalPage';
+import ProdutosPage from '@/pages/cadastros/ProdutosPage';
+import ClientesPage from '@/pages/cadastros/ClientesPage';
+import FornecedoresPage from '@/pages/cadastros/FornecedoresPage';
+import CadastrosAuxiliaresPage from '@/pages/cadastros/CadastrosAuxiliaresPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('accessToken');
@@ -54,8 +58,12 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
-      { path: 'cadastros/produtos', element: <ComingSoon title="Cadastro de Produtos" /> },
-      { path: 'cadastros/clientes', element: <ComingSoon title="Cadastro de Clientes" /> },
+      // Fase 3 - Cadastros Base
+      { path: 'cadastros/produtos', element: <ProdutosPage /> },
+      { path: 'cadastros/clientes', element: <ClientesPage /> },
+      { path: 'cadastros/fornecedores', element: <FornecedoresPage /> },
+      { path: 'cadastros/auxiliares', element: <CadastrosAuxiliaresPage /> },
+      // Modulos futuros
       { path: 'vendas', element: <ComingSoon title="Modulo de Vendas" /> },
       { path: 'estoque', element: <ComingSoon title="Gestao de Estoque" /> },
       { path: 'financeiro', element: <ComingSoon title="Modulo Financeiro" /> },

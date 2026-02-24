@@ -6,6 +6,8 @@ import {
   LayoutDashboard,
   Package,
   Users,
+  Truck,
+  Settings2,
   ShoppingCart,
   Warehouse,
   DollarSign,
@@ -20,6 +22,8 @@ const menuItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/cadastros/produtos', label: 'Produtos', icon: Package },
   { path: '/cadastros/clientes', label: 'Clientes', icon: Users },
+  { path: '/cadastros/fornecedores', label: 'Fornecedores', icon: Truck },
+  { path: '/cadastros/auxiliares', label: 'Cadastros Aux.', icon: Settings2 },
   { path: '/vendas', label: 'Vendas', icon: ShoppingCart },
   { path: '/estoque', label: 'Estoque', icon: Warehouse },
   { path: '/financeiro', label: 'Financeiro', icon: DollarSign },
@@ -46,7 +50,7 @@ export function Sidebar() {
             <Building2 className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-sm font-bold">ERP Construcao</h1>
-              <p className="text-xs text-muted-foreground">v1.0.0</p>
+              <p className="text-xs text-muted-foreground">v3.0.0 - Cadastros</p>
             </div>
           </div>
         )}

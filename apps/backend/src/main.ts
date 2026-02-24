@@ -53,6 +53,12 @@ async function bootstrap() {
     .addTag('Usuarios', 'Gestao de usuarios')
     .addTag('Health', 'Health check')
     .addTag('Fiscal', 'Modulo Fiscal e Tributario')
+    .addTag('Produtos', 'Cadastro de Produtos - CRUD completo com precos, estoque, composicao, similares, aplicacoes e midias')
+    .addTag('Clientes', 'Cadastro de Clientes - CRM com enderecos, contatos e analise de credito')
+    .addTag('Fornecedores', 'Cadastro de Fornecedores - Supply chain com avaliacoes')
+    .addTag('Transportadoras', 'Cadastro de Transportadoras')
+    .addTag('Vendedores', 'Cadastro de Vendedores com carteira de clientes')
+    .addTag('Cadastros Auxiliares', 'Categorias, Marcas, Fabricantes, Unidades, Tabelas de Preco, Formas/Condicoes Pagamento, Bancos, Contas, Centros Custo, Plano Contas, CEP e Auditoria')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
