@@ -1,0 +1,44 @@
+# Dependencias
+node_modules/
+dist/
+build/
+.next/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testes
+coverage/
+.nyc_output/
+
+# Docker
+docker-compose.override.yml
+
+# Temp
+tmp/
+temp/
+.cache/
+
+# TypeORM
+ormlogs.typeorm
+
+# Build
+*.tsbuildinfo

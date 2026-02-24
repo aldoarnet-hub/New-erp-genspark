@@ -1,0 +1,24 @@
+{
+  "name": "erp-saas-construcao",
+  "version": "1.0.0",
+  "description": "ERP SaaS Multi-Tenant para Varejo/Atacado de Materiais de Construcao",
+  "private": true,
+  "scripts": {
+    "backend:dev": "cd apps/backend && npm run start:dev",
+    "backend:build": "cd apps/backend && npm run build",
+    "backend:start": "cd apps/backend && npm run start:prod",
+    "frontend:dev": "cd apps/frontend && npm run dev",
+    "frontend:build": "cd apps/frontend && npm run build",
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "build": "npm run backend:build && npm run frontend:build",
+    "lint": "cd apps/backend && npm run lint && cd ../frontend && npm run lint",
+    "test": "cd apps/backend && npm run test && cd ../frontend && npm run test",
+    "docker:up": "docker-compose -f infra/docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f infra/docker/docker-compose.yml down",
+    "docker:build": "docker-compose -f infra/docker/docker-compose.yml build",
+    "db:migrate": "cd apps/backend && npm run migration:run",
+    "db:seed": "cd apps/backend && npm run seed"
+  },
+  "keywords": ["erp", "saas", "multi-tenant", "construcao", "nestjs", "react"],
+  "license": "UNLICENSED"
+}
