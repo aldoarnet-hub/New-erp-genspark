@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
+import FiscalPage from '@/pages/fiscal/FiscalPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('accessToken');
@@ -58,7 +59,7 @@ export const router = createBrowserRouter([
       { path: 'vendas', element: <ComingSoon title="Modulo de Vendas" /> },
       { path: 'estoque', element: <ComingSoon title="Gestao de Estoque" /> },
       { path: 'financeiro', element: <ComingSoon title="Modulo Financeiro" /> },
-      { path: 'fiscal', element: <ComingSoon title="Modulo Fiscal" /> },
+      { path: 'fiscal', element: <FiscalPage /> },
       { path: 'relatorios', element: <ComingSoon title="Relatorios e BI" /> },
       { path: 'configuracoes', element: <ComingSoon title="Configuracoes do Sistema" /> },
     ],

@@ -5,6 +5,16 @@ import { Empresa, EmpresaTipo, RegimeTributario } from '../../modules/core/empre
 import { Filial } from '../../modules/core/filial/entities/filial.entity';
 import { Usuario } from '../../modules/core/usuario/entities/usuario.entity';
 import { PERFIS } from '../../shared/enums';
+import { seedFiscalData } from './seed-fiscal';
+
+// Import fiscal entities for DataSource
+import { EmpresaFiscal } from '../../modules/fiscal/entities/empresa-fiscal.entity';
+import { NcmTabela } from '../../modules/fiscal/entities/ncm-tabela.entity';
+import { CestTabela } from '../../modules/fiscal/entities/cest-tabela.entity';
+import { CfopTabela } from '../../modules/fiscal/entities/cfop-tabela.entity';
+import { CstIcms, CstIpi, CstPisCofins } from '../../modules/fiscal/entities/cst-tabelas.entity';
+import { IcmsAliquotasUf, IcmsStMva } from '../../modules/fiscal/entities/icms-tabelas.entity';
+import { MatrizTributaria } from '../../modules/fiscal/entities/matriz-tributaria.entity';
 
 async function runSeed() {
   const dataSource = new DataSource({
@@ -14,7 +24,12 @@ async function runSeed() {
     username: process.env.DATABASE_USERNAME || 'postgres',
     password: process.env.DATABASE_PASSWORD || 'postgres',
     database: process.env.DATABASE_NAME || 'erp_dev',
-    entities: [Tenant, Empresa, Filial, Usuario],
+    entities: [
+      Tenant, Empresa, Filial, Usuario,
+      EmpresaFiscal, NcmTabela, CestTabela, CfopTabela,
+      CstIcms, CstIpi, CstPisCofins,
+      IcmsAliquotasUf, IcmsStMva, MatrizTributaria,
+    ],
     synchronize: true,
   });
 
@@ -147,6 +162,9 @@ async function runSeed() {
       console.log(`Usuario criado: ${u.email} / 123456`);
     }
   }
+
+  // 6. Seed dos dados fiscais (tabelas de referência)
+  await seedFiscalData(dataSource);
 
   console.log('\nSeed concluido com sucesso!');
   console.log('==========================================');

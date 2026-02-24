@@ -13,7 +13,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5175',
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
@@ -52,6 +52,7 @@ async function bootstrap() {
     .addTag('Filiais', 'Gestao de filiais')
     .addTag('Usuarios', 'Gestao de usuarios')
     .addTag('Health', 'Health check')
+    .addTag('Fiscal', 'Modulo Fiscal e Tributario')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
