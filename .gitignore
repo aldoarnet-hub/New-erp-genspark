@@ -42,3 +42,4 @@ ormlogs.typeorm
 
 # Build
 *.tsbuildinfo
+.github/workflows/

@@ -1,11 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { swaggerConfig, swaggerCustomOptions } from './config/swagger.config';
+import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
+import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
+import { TransformInterceptor } from './shared/interceptors/transform.interceptor';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: process.env.NODE_ENV === 'production'
+      ? ['error', 'warn', 'log']
+      : ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
 
   // Prefixo global da API
   const apiPrefix = process.env.API_PREFIX || '/api/v1';
@@ -13,9 +21,10 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: true,
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5175',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-Id'],
   });
 
   // Validacao global
@@ -30,50 +39,27 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger
-  const config = new DocumentBuilder()
-    .setTitle('ERP SaaS - Materiais de Construcao')
-    .setDescription('API do sistema ERP Multi-Tenant para varejo e atacado de materiais de construcao')
-    .setVersion('1.0.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Insira o token JWT',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
-    .addTag('Auth', 'Autenticacao e autorizacao')
-    .addTag('Tenants', 'Gestao de tenants')
-    .addTag('Empresas', 'Gestao de empresas')
-    .addTag('Filiais', 'Gestao de filiais')
-    .addTag('Usuarios', 'Gestao de usuarios')
-    .addTag('Health', 'Health check')
-    .addTag('Fiscal', 'Modulo Fiscal e Tributario')
-    .addTag('Produtos', 'Cadastro de Produtos - CRUD completo com precos, estoque, composicao, similares, aplicacoes e midias')
-    .addTag('Clientes', 'Cadastro de Clientes - CRM com enderecos, contatos e analise de credito')
-    .addTag('Fornecedores', 'Cadastro de Fornecedores - Supply chain com avaliacoes')
-    .addTag('Transportadoras', 'Cadastro de Transportadoras')
-    .addTag('Vendedores', 'Cadastro de Vendedores com carteira de clientes')
-    .addTag('Cadastros Auxiliares', 'Categorias, Marcas, Fabricantes, Unidades, Tabelas de Preco, Formas/Condicoes Pagamento, Bancos, Contas, Centros Custo, Plano Contas, CEP e Auditoria')
-    .build();
+  // Filtro global de excecoes
+  app.useGlobalFilters(new HttpExceptionFilter());
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  });
+  // Interceptors globais
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new TransformInterceptor(),
+  );
+
+  // Swagger - apenas em dev/staging
+  if (process.env.NODE_ENV !== 'production') {
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document, swaggerCustomOptions);
+    logger.log('Swagger disponivel em /api/docs');
+  }
 
   const port = process.env.BACKEND_PORT || 3001;
   await app.listen(port);
 
   logger.log(`===========================================`);
   logger.log(`ERP SaaS Backend rodando na porta ${port}`);
-  logger.log(`Swagger: http://localhost:${port}/api/docs`);
   logger.log(`API: http://localhost:${port}${apiPrefix}`);
   logger.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
   logger.log(`===========================================`);
