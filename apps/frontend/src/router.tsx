@@ -7,6 +7,7 @@ import ProdutosPage from '@/pages/cadastros/ProdutosPage';
 import ClientesPage from '@/pages/cadastros/ClientesPage';
 import FornecedoresPage from '@/pages/cadastros/FornecedoresPage';
 import CadastrosAuxiliaresPage from '@/pages/cadastros/CadastrosAuxiliaresPage';
+import ContabilidadePage from '@/pages/contabil/ContabilidadePage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('accessToken');
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
       { path: 'vendas', element: <ComingSoon title="Modulo de Vendas" /> },
       { path: 'estoque', element: <ComingSoon title="Gestao de Estoque" /> },
       { path: 'financeiro', element: <ComingSoon title="Modulo Financeiro" /> },
+      { path: 'contabilidade', element: <ContabilidadePage /> },
       { path: 'fiscal', element: <FiscalPage /> },
       { path: 'relatorios', element: <ComingSoon title="Relatorios e BI" /> },
       { path: 'configuracoes', element: <ComingSoon title="Configuracoes do Sistema" /> },
