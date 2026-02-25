@@ -191,8 +191,58 @@ export async function seedFiscalData(dataSource: DataSource) {
     }
 
     console.log('✅ Dados fiscais populados com sucesso!');
+
+    // ============================================================
+    // Calendario Fiscal (obrigacoes padrao)
+    // ============================================================
+    const calCount = await qr.query(`SELECT COUNT(*) as c FROM calendario_fiscal`);
+    if (parseInt(calCount[0].c) === 0) {
+      console.log('  📅 Populando Calendario Fiscal...');
+      // Use a default tenant ID for seed data
+      const defaultTenantId = '00000000-0000-0000-0000-000000000001';
+      await qr.query(`
+        INSERT INTO calendario_fiscal ("tenantId", codigo, descricao, "tipoObrigacao", periodicidade, "diaVencimento", "antecipaFeriado", "antecipaFds", imposto, "codigoReceita", "diasAlerta") VALUES
+        ('${defaultTenantId}', 'DAS', 'DAS - Simples Nacional', 'pagamento', 'mensal', 20, true, true, 'SIMPLES', NULL, 5),
+        ('${defaultTenantId}', 'ICMS', 'ICMS Proprio - Apuracao Mensal', 'pagamento', 'mensal', 10, true, true, 'ICMS', NULL, 5),
+        ('${defaultTenantId}', 'ICMS-ST', 'ICMS Substituicao Tributaria', 'pagamento', 'mensal', 10, true, true, 'ICMS', NULL, 5),
+        ('${defaultTenantId}', 'IPI', 'IPI - Imposto sobre Produtos Industrializados', 'pagamento', 'mensal', 25, true, true, 'IPI', '1097', 5),
+        ('${defaultTenantId}', 'PIS', 'PIS - Programa de Integracao Social', 'pagamento', 'mensal', 25, true, true, 'PIS', '8109', 5),
+        ('${defaultTenantId}', 'COFINS', 'COFINS - Contribuicao Financiamento Seguridade', 'pagamento', 'mensal', 25, true, true, 'COFINS', '2991', 5),
+        ('${defaultTenantId}', 'ISS', 'ISS - Imposto Sobre Servicos', 'pagamento', 'mensal', 10, true, true, 'ISS', NULL, 5),
+        ('${defaultTenantId}', 'IRPJ-LP', 'IRPJ - Lucro Presumido', 'pagamento', 'trimestral', 30, true, true, 'IRPJ', '2172', 10),
+        ('${defaultTenantId}', 'CSLL-LP', 'CSLL - Lucro Presumido', 'pagamento', 'trimestral', 30, true, true, 'CSLL', '2372', 10),
+        ('${defaultTenantId}', 'SPED-FIS', 'SPED Fiscal - EFD ICMS/IPI', 'declaracao', 'mensal', 10, true, true, NULL, NULL, 7),
+        ('${defaultTenantId}', 'SPED-CON', 'SPED Contribuicoes - EFD PIS/COFINS', 'declaracao', 'mensal', 10, true, true, NULL, NULL, 7),
+        ('${defaultTenantId}', 'DCTF', 'DCTF - Declaracao de Debitos e Creditos', 'declaracao', 'mensal', 15, true, true, NULL, NULL, 7),
+        ('${defaultTenantId}', 'EFD-REINF', 'EFD-Reinf - Escrituracao Fiscal Digital', 'declaracao', 'mensal', 15, true, true, NULL, NULL, 7),
+        ('${defaultTenantId}', 'SPED-ECF', 'SPED ECF - Escrituracao Contabil Fiscal', 'declaracao', 'anual', 31, true, true, NULL, NULL, 30),
+        ('${defaultTenantId}', 'DIRF', 'DIRF - Declaracao IR Retido Fonte', 'declaracao', 'anual', 28, true, true, NULL, NULL, 30)
+      `);
+    }
+
+    // ============================================================
+    // CEST (Codigo Especificador de Substituicao Tributaria) - materiais de construcao
+    // ============================================================
+    const cestCount = await qr.query(`SELECT COUNT(*) as c FROM cest_tabela`);
+    if (parseInt(cestCount[0].c) === 0) {
+      console.log('  📋 Populando CEST (materiais de construcao)...');
+      await qr.query(`
+        INSERT INTO cest_tabela ("cestCodigo", descricao, segmento, item) VALUES
+        ('1000100', 'Argamassas', 'Materiais de construcao', '1.0'),
+        ('1000200', 'Cal', 'Materiais de construcao', '2.0'),
+        ('1000300', 'Cimento', 'Materiais de construcao', '3.0'),
+        ('1000400', 'Tijolo, telha e tubos cerâmicos', 'Materiais de construcao', '4.0'),
+        ('1000500', 'Telhas e caixas dágua de fibrocimento', 'Materiais de construcao', '5.0'),
+        ('1000600', 'Tintas e vernizes', 'Materiais de construcao', '6.0'),
+        ('1000700', 'Materiais elétricos', 'Materiais de construcao', '7.0'),
+        ('1000800', 'Tubos e acessórios PVC', 'Materiais de construcao', '8.0'),
+        ('1000900', 'Vergalhões e barras de aço', 'Materiais de construcao', '9.0'),
+        ('1001000', 'Vidros', 'Materiais de construcao', '10.0')
+      `);
+    }
+
   } catch (error) {
-    console.error('❌ Erro ao popular dados fiscais:', error.message);
+    console.error('Erro ao popular dados fiscais:', error.message);
   } finally {
     await qr.release();
   }
