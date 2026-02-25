@@ -6,6 +6,7 @@ import { CoreModule } from './modules/core/core.module';
 import { HealthModule } from './modules/health/health.module';
 import { FiscalModule } from './modules/fiscal/fiscal.module';
 import { CadastrosModule } from './modules/cadastros/cadastros.module';
+import { ContabilModule } from './modules/contabil/contabil.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 
@@ -41,6 +42,7 @@ import databaseConfig from './config/database.config';
     CoreModule,
     FiscalModule,
     CadastrosModule,
+    ContabilModule,
   ],
 })
 export class AppModule {}

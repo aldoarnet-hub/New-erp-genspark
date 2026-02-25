@@ -27,6 +27,7 @@ const menuItems = [
   { path: '/vendas', label: 'Vendas', icon: ShoppingCart },
   { path: '/estoque', label: 'Estoque', icon: Warehouse },
   { path: '/financeiro', label: 'Financeiro', icon: DollarSign },
+  { path: '/contabilidade', label: 'Contabilidade', icon: Building2 },
   { path: '/fiscal', label: 'Fiscal', icon: FileText },
   { path: '/relatorios', label: 'Relatorios', icon: BarChart3 },
   { path: '/configuracoes', label: 'Configuracoes', icon: Settings },

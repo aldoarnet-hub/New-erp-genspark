@@ -127,11 +127,13 @@ export class MotorTributarioService {
     'RR', 'SE', 'TO',
   ];
 
-  // FCP por UF
+  // FCP por UF (percentuais vigentes conforme legislação estadual)
   private readonly FCP_UFS: Record<string, number> = {
-    AC: 2.0, AL: 1.0, AM: 2.0, AP: 2.0, BA: 1.0, CE: 1.0,
-    MA: 2.0, PA: 2.0, PB: 1.0, PE: 1.0, PI: 1.0, RN: 1.0,
-    RO: 1.0, RR: 2.0, SE: 1.0, TO: 2.0,
+    AC: 2.0, AL: 2.0, AM: 2.0, AP: 2.0, BA: 2.0, CE: 2.0,
+    DF: 2.0, ES: 2.0, GO: 2.0, MA: 2.0, MG: 2.0, MS: 2.0,
+    MT: 2.0, PA: 2.0, PB: 2.0, PE: 2.0, PI: 2.0, PR: 2.0,
+    RJ: 2.0, RN: 2.0, RO: 2.0, RR: 2.0, RS: 2.0, SC: 0.0,
+    SE: 2.0, SP: 2.0, TO: 2.0,
   };
 
   constructor(
@@ -336,6 +338,8 @@ export class MotorTributarioService {
 
   /**
    * Calcula DIFAL (EC 87/2015) para operações interestaduais com não contribuintes
+   * Desde 2019: 100% para UF destino conforme Convênio ICMS 93/2015
+   * Base legal: LC 190/2022
    */
   private calcularDIFAL(item: ItemOperacao, contexto: ContextoTributario) {
     if (contexto.contribuinteIcms || contexto.ufOrigem === contexto.ufDestino) {
@@ -343,8 +347,9 @@ export class MotorTributarioService {
     }
 
     const aliqInterna = this.getAliquotaInterna(contexto.ufDestino);
-    const aliqInter = this.getAliquotaInterestadual(contexto.ufOrigem, contexto.ufDestino, false);
-    const difalAliq = aliqInterna - aliqInter;
+    // Para DIFAL EC 87/2015 usar alíquota interestadual real (contribuinte=true)
+    const aliqInter = this.getAliquotaInterestadual(contexto.ufOrigem, contexto.ufDestino, true);
+    const difalAliq = Math.max(0, aliqInterna - aliqInter);
     const difalValor = this.round2(item.valorTotal * difalAliq / 100);
 
     const fcpAliq = this.FCP_UFS[contexto.ufDestino] || 0;
